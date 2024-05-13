@@ -1,0 +1,119 @@
+CREATE DATABASE Railways;
+USE Railways;
+
+mysql> CREATE TABLE Passengers (
+ -> passenger_id INT AUTO_INCREMENT PRIMARY KEY,
+ -> name VARCHAR(100) NOT NULL,
+ -> age INT NOT NULL,
+ -> gender VARCHAR(10) NOT NULL
+ -> );
+ 
+mysql> CREATE TABLE Trains (
+ -> train_id INT AUTO_INCREMENT PRIMARY KEY,
+ -> train_name VARCHAR(100) NOT NULL,
+ -> source_station_id INT NOT NULL,
+ -> destination_station_id INT NOT NULL,
+ -> departure_time TIME NOT NULL,
+ -> arrival_time TIME NOT NULL
+ -> );
+ 
+mysql> CREATE TABLE Stations (
+ -> station_id INT AUTO_INCREMENT PRIMARY KEY,
+ -> station_name VARCHAR(100) NOT NULL
+ -> );
+ 
+mysql> CREATE TABLE Bookings (
+ -> booking_id INT AUTO_INCREMENT PRIMARY KEY,
+ -> passenger_id INT NOT NULL,
+ -> train_id INT NOT NULL,
+ -> booking_date DATE NOT NULL
+ -> );
+ 
+mysql> CREATE TABLE Seats (
+ -> seat_id INT AUTO_INCREMENT PRIMARY KEY,
+ -> train_id INT NOT NULL,
+ -> date DATE NOT NULL,
+ -> available_seats INT NOT NULL
+ -> );
+ 
+INSERT VALUES INTO TABLE SQL QUERIES:
+mysql> INSERT INTO Passengers (name, age, gender) VALUES
+ -> ('Garv', 25, 'Male'),
+ -> ('Advik', 30, 'Male'),
+ -> ('Aarav', 28, 'Male');
+ 
+mysql> INSERT INTO Trains (train_name, source_station_id, 
+destination_station_id, departure_time, arrival_time) VALUES
+ -> ('Delhi Express', 1, 4, '08:00:00', '16:00:00'),
+ -> ('Mumbai Superfast', 2, 3, '10:00:00', '14:00:00'),
+ -> ('Chennai Mail', 3, 1, '09:00:00', '17:00:00');
+ 
+mysql> INSERT INTO Stations (station_name) VALUES
+ -> ('Delhi'),
+ -> ('Mumbai'),
+ -> ('Chennai'),
+ -> ('Kolkata');
+ 
+mysql> INSERT INTO Bookings (passenger_id, train_id, booking_date) VALUES
+ -> (1, 1, '2024-05-15'),
+ -> (2, 2, '2024-05-16'),
+ -> (3, 3, '2024-05-17');
+ 
+mysql> INSERT INTO Seats (train_id, date, available_seats) VALUES
+ -> (1, '2024-05-15', 150),
+ -> (2, '2024-05-16', 200),
+ -> (3, '2024-05-17', 100);
+
+ 
+SQL QUERIES TO RETRIEVE DATA:
+
+1.Retrieve details of passengers aged 25.
+SELECT * FROM Passengers WHERE age = 25;
+
+2. Retrieve the train details including train ID, train name, source station ID, 
+destination station ID, departure time, and arrival time for trains departing 
+from the station 'Delhi'.
+SELECT t.train_id, t.train_name, t.source_station_id, t.destination_station_id, 
+t.departure_time, t.arrival_time
+ -> FROM Trains t
+ -> JOIN Stations s ON t.source_station_id = s.station_id
+ -> WHERE s.station_name = 'Delhi';
+ 
+3. Calculate the total number of passengers booked on each train by counting 
+the number of bookings for each train and grouping the results by train ID.
+SELECT train_id, COUNT(*) AS total_passengers FROM Bookings GROUP BY 
+train_id;
+
+4. Retrieve all details of trains where the train name starts with 'De'.
+SELECT *
+ -> FROM Trains
+ -> WHERE train_name LIKE 'De%’;
+ 
+5. Retrieve the maximum available seats for train ID 1 from the Seats table.
+SELECT MAX(available_seats) AS max_available_seats FROM Seats WHERE 
+train_id = 1;
+
+6. Calculate the average age of passengers from the Passengers table.
+SELECT AVG(age) AS average_age FROM Passengers;
+
+7. Delete the booking with booking ID 1 from the Bookings table.
+DELETE FROM Bookings WHERE booking_id = 1;
+
+8. Retrieve the train ID, train name, and total available seats by summing up 
+the available seats for each train from the Trains and Seats tables, grouped by 
+train ID and train name.
+SELECT t.train_id, t.train_name, SUM(s.available_seats) AS total_available_seats
+ -> FROM Trains t, Seats s
+ -> WHERE t.train_id = s.train_id
+ -> GROUP BY t.train_id, t.train_name;
+ 
+9. Count the total number of passengers booked on each train for the date 
+'2024-05-16', grouping the results by train ID.
+SELECT train_id, COUNT(*) AS total_passengers
+ -> FROM Bookings
+ -> WHERE booking_date = '2024-05-16'
+ -> GROUP BY train_id;
+ 
+10. Retrieve all details of passengers from the Passengers table, ordered by 
+name in ascending order.
+SELECT * FROM Passengers ORDER BY name ASC;
